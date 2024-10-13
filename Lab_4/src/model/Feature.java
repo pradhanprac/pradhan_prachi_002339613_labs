@@ -1,6 +1,7 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package model;
 
@@ -9,22 +10,24 @@ package model;
  * @author prach
  */
 public class Feature {
+    
     private Product owner;
     private String name;
     private Object value;
 
-    public Product getOwner() {
-        return owner;
+    public Feature(Product owner) {
+        this.owner = owner;
     }
 
-    public void setOwner(Product owner) {
-        this.owner = owner;
+    public Feature(Product owner, String name, Object value) {
+        this.name = name;
+        this.value = value;
     }
 
     public String getName() {
         return name;
     }
-
+    
     public void setName(String name) {
         this.name = name;
     }
@@ -36,9 +39,12 @@ public class Feature {
     public void setValue(Object value) {
         this.value = value;
     }
-
+    
     @Override
-    public String toString(){
+    public String toString() {
         return name;
     }
+
 }
+
+

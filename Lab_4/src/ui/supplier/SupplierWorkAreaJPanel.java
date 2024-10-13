@@ -6,9 +6,13 @@ package ui.supplier;
 
 import java.awt.CardLayout;
 import java.awt.Component;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import model.Product;
 import model.Supplier;
+import model.SupplierDirectory;
 import ui.LoginScreen;
+import ui.admin.AddSupplier;
 
 /**
  *
@@ -21,7 +25,9 @@ public class SupplierWorkAreaJPanel extends javax.swing.JPanel {
      */
     JPanel mainWorkArea;
     Supplier supplier;
+    private SupplierDirectory supplierDirectory;
 //    MasterOrderCatalog masterOrderCatalog;
+    
 
     /**
      * Creates new form ProductManagerWorkAreaJPanel
@@ -30,7 +36,7 @@ public class SupplierWorkAreaJPanel extends javax.swing.JPanel {
 
         initComponents();
         this.mainWorkArea = mainWorkArea;
-        
+        btnSupplierProfile.setEnabled(true);
         this.supplier = supplier;
         if (supplier != null) lblWelcome.setText("Welcome to Lab 4, "+supplier.getSupplyName());
         
@@ -181,6 +187,13 @@ public class SupplierWorkAreaJPanel extends javax.swing.JPanel {
 
     private void btnSupplierProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSupplierProfileActionPerformed
         // TODO add your handling code here:
+        
+        UpdateSupplierJPanel as = new UpdateSupplierJPanel(mainWorkArea, supplierDirectory,supplier);
+        mainWorkArea.add("AddSupplier", as);
+        CardLayout layout = (CardLayout)mainWorkArea.getLayout();
+        layout.next(mainWorkArea);
+        
+
     }//GEN-LAST:event_btnSupplierProfileActionPerformed
 
     private void PerformanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PerformanceActionPerformed

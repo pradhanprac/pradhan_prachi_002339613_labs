@@ -6,39 +6,48 @@
 package model;
 
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
 
 /**
  *
- * @author Rushabh
+ * @author prach
  */
 public class Product {
+    
     private String name;
     private int price;
     private int id;
+    private ImageIcon logoImage;
+    
+    private ArrayList<Feature> features = new ArrayList<>();
 
-   private ArrayList<Feature> features;
-
+    private static int count = 0;
+    
+    // Method to get the list of features
     public ArrayList<Feature> getFeatures() {
         return features;
     }
     
-     public Feature addNewFeature() {
-        Feature f = new Feature();
-        features.add(f);
-        return f;
+    // Method to add a new feature and return it
+    public Feature addNewFeature() {
+        Feature newFeature = new Feature(this);
+        features.add(newFeature);
+        return newFeature;
     }
-   
 
-    public void setFeatures(ArrayList<Feature> features) {
-        this.features = features;
+    // Method to remove a feature at a given index
+    public void removeFeature(int index) {
+        if (index >= 0 && index < features.size()) {
+            features.remove(index);
+        }
     }
-    private static int count = 0;
+    
+    
     
     public Product() {
         count++;
         id = count;
         
-        features = new ArrayList<Feature>();
     }
 
     public String getName() {
@@ -62,7 +71,21 @@ public class Product {
         this.price = price;
     }
 
-    
+    public boolean hasFeatureWithName(String featureName) {
+        for (Feature feature : features) {
+            if (feature.getName().equals(featureName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public ImageIcon getLogoImage() {
+        return logoImage;
+    }
+
+    public void setLogoImage(ImageIcon logoImage) {
+        this.logoImage = logoImage;
+    }
     @Override
     public String toString() {
         return name;

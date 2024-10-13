@@ -6,10 +6,12 @@ package ui.supplier;
 
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 import model.Feature;
+import model.FeatureCatalog;
 import model.Product;
 
 /**
@@ -35,10 +37,30 @@ public class ViewProductDetailJPanel extends javax.swing.JPanel {
         txtName.setText(this.product.getName());
         txtId.setText(String.valueOf(this.product.getId()));
         txtPrice.setText(String.valueOf(this.product.getPrice()));
-
+        
+         if (product.getLogoImage() != null)
+            imgLogo.setIcon(product.getLogoImage());
+         else
+            imgLogo.setText("No Logo");
+        
+        synchronizeProductFeaturesWithCatalog(product);
+         
         refreshTable();
     }
-  public void refreshTable() {
+   private void synchronizeProductFeaturesWithCatalog(Product product) 
+    {
+        Set<String> featureNames = FeatureCatalog.getFeatureNames();
+        for (String featureName : featureNames) 
+        {
+            if (!product.hasFeatureWithName(featureName)) {
+                Feature newFeature = product.addNewFeature();
+                newFeature.setName(featureName);
+                // Set a default value or leave it empty
+                newFeature.setValue("");
+            }
+        }
+    } 
+    public void refreshTable() {
        DefaultTableModel model=(DefaultTableModel) tblFeatures.getModel();
        model.setRowCount(0);
        for(Feature f:product.getFeatures()){
@@ -73,6 +95,7 @@ public class ViewProductDetailJPanel extends javax.swing.JPanel {
         lblPrice = new javax.swing.JLabel();
         txtPrice = new javax.swing.JTextField();
         btnUpdate = new javax.swing.JButton();
+        imgLogo = new javax.swing.JLabel();
 
         backButton1.setText("<< Back");
         backButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -172,7 +195,9 @@ public class ViewProductDetailJPanel extends javax.swing.JPanel {
                         .addComponent(lblPrice)
                         .addGap(18, 18, 18)
                         .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(140, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(imgLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(153, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,14 +215,16 @@ public class ViewProductDetailJPanel extends javax.swing.JPanel {
                     .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblPrice))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(imgLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave)
                     .addComponent(btnUpdate)
                     .addComponent(btnAddFeature)
                     .addComponent(btnRemoveFeature))
-                .addContainerGap(234, Short.MAX_VALUE))
+                .addContainerGap(239, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -233,10 +260,18 @@ private void backAction() {
 
     private void btnAddFeatureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddFeatureActionPerformed
         // TODO add your handling code here:
-        Feature newFeature=product.addNewFeature();
-        newFeature.setName("New Feature");
+        String featureName = JOptionPane.showInputDialog(this, "Enter Feature Name:");
+
+        // Add feature name to the static list
+        FeatureCatalog.addFeatureName(featureName);
+
+        // Now add the feature to the current product with an empty value or a default value
+        Feature newFeature = product.addNewFeature();
+        newFeature.setName(featureName);
         newFeature.setValue("Type Value here");
+
         saveFeatures();
+
         refreshTable();
     }//GEN-LAST:event_btnAddFeatureActionPerformed
 
@@ -283,6 +318,7 @@ private void backAction() {
     private javax.swing.JButton btnRemoveFeature;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate;
+    private javax.swing.JLabel imgLogo;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblId;
     private javax.swing.JLabel lblName;
