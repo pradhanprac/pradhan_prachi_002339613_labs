@@ -38,6 +38,7 @@ public class BrowseProductsJPanel extends javax.swing.JPanel {
          this.currentOrder = currentOrder;
         populateCombo();
         populateProductTable();
+        populateCartTable();
       
     }
 
@@ -389,11 +390,59 @@ private void populateProductTable(String keyword) {
 
     private void btnCheckOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckOutActionPerformed
         // TODO add your handling code here:
+        masterOrderList.addNewOrder(currentOrder);
+        currentOrder = new Order();
+        
+        populateCombo();
+        populateProductTable();
+        populateCartTable();
+        
+        txtNewQuantity.setText("");
+        txtSalesPrice.setText("");
+        txtSearch.setText("");
+        
+        spnQuantity.setValue(0);
+       
+        JOptionPane.showMessageDialog(this, "Thank you for your purchase. Looking forward to see you again!");
        
     }//GEN-LAST:event_btnCheckOutActionPerformed
 
     private void btnModifyQuantityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModifyQuantityActionPerformed
         // TODO add your handling code here:
+        int selectedRowIndex = tblCart.getSelectedRow();
+        
+        if(selectedRowIndex < 0){
+            JOptionPane.showMessageDialog(this, "Please select the order item first");
+            return;
+        }
+        
+        OrderItem item = (OrderItem) tblCart.getValueAt(selectedRowIndex, 0);
+        
+        int quant =0;
+        
+        try{
+            
+            //salesPrice = Double.parseDouble(txtSalesPrice.getText());
+            quant = Integer.parseInt(txtNewQuantity.getText());
+            
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(this, "Please check the modified qantity fields");
+            return; 
+        }
+        
+        int oldQuant = item.getQuantity();
+            if(item.getProduct().getAvail() + oldQuant < quant){
+                JOptionPane.showMessageDialog(this, "Please check product availability");
+            return;     
+            }
+            
+            item.getProduct().setAvail(item.getProduct().getAvail()+oldQuant-quant);
+            item.setQuantity(quant);
+        
+            populateCartTable();
+        populateProductTable();
+
         
     }//GEN-LAST:event_btnModifyQuantityActionPerformed
 
@@ -405,9 +454,35 @@ private void populateProductTable(String keyword) {
 
     private void btnRemoveOrderItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveOrderItemActionPerformed
        
+         int selectedRowIndex = tblCart.getSelectedRow();
+        
+        if(selectedRowIndex < 0){
+            JOptionPane.showMessageDialog(this, "Please select the order item first");
+            return;
+        }
+        
+        OrderItem item = (OrderItem) tblCart.getValueAt(selectedRowIndex, 0);
+      
+            item.getProduct().setAvail(item.getProduct().getAvail()+ item.getQuantity());
+            currentOrder.deleteItem(item);
+        
+        populateCartTable();
+        populateProductTable();
     }//GEN-LAST:event_btnRemoveOrderItemActionPerformed
 
     private void btnViewOrderItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewOrderItemActionPerformed
+        int selectedRowIndex = tblCart.getSelectedRow();
+        
+        if(selectedRowIndex < 0){
+            JOptionPane.showMessageDialog(this, "Please select the item first");
+            return;
+        }
+        
+        OrderItem oi = (OrderItem) tblCart.getValueAt(selectedRowIndex, 0);
+        ViewOrderItemDetailJPanel vpdp = new ViewOrderItemDetailJPanel(userProcessContainer, oi);
+        userProcessContainer.add("ViewOrderItemDetailJPanel", vpdp);
+        CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+        layout.next(userProcessContainer);
         
     }//GEN-LAST:event_btnViewOrderItemActionPerformed
 
@@ -429,12 +504,24 @@ private void populateProductTable(String keyword) {
             
             salesPrice = Double.parseDouble(txtSalesPrice.getText());
             quant = (Integer)spnQuantity.getValue();
-            
+            if(quant<1){
+                 throw new IllegalArgumentException("Quantity should be greater than 0");
+                
+            }
+              }
+        catch (IllegalArgumentException e) {
+    // Catch the specific exception thrown for invalid quantity
+    JOptionPane.showMessageDialog(this, e.getMessage());
+    return;
         }
+        
         catch(Exception e){
             JOptionPane.showMessageDialog(this, "Please check the price and qantity fields");
             return; 
         }
+        
+        
+        
         
         if(salesPrice < product.getPrice()){
             JOptionPane.showMessageDialog(this, "Price should be more than it is set in the price");

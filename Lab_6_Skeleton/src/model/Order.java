@@ -38,4 +38,9 @@ public class Order {
         }
         return null;
     }
+       public void deleteItem(OrderItem item){
+        this.orderItemList.remove(item);
+        
+    }
+    
 }
